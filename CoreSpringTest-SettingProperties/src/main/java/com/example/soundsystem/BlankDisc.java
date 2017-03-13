@@ -2,6 +2,7 @@ package com.example.soundsystem;
 
 import java.util.List;
 
+//A class that will be defined as a bean in xml is created with private property variables and getter and setter methods
 public class BlankDisc implements CompactDisc{
 	
 	private String title;

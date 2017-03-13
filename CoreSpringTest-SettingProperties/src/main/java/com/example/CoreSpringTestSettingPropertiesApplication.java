@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.example.soundsystem.BlankDisc;
+import com.example.soundsystem.CompactDisc;
+
 @SpringBootApplication
 public class CoreSpringTestSettingPropertiesApplication {
 
@@ -12,6 +15,9 @@ public class CoreSpringTestSettingPropertiesApplication {
 		SpringApplication.run(CoreSpringTestSettingPropertiesApplication.class, args);
 		
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/jebeniservis.xml");
+		
+		CompactDisc cd = applicationContext.getBean(BlankDisc.class);
+		cd.play();
 		
 	}
 }

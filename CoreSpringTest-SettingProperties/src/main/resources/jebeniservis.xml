@@ -7,12 +7,25 @@
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-	<context:component-scan base-package="com.example.soundsystem" />
 	
-	<bean id="cdPlayer" class="com.example.soundsystem.CDPlayer">
 	
-		<property name="compactDisc" ref="compactDisc"/>
+	<!-- Bean definition of a BlankDisc class is done here, as normal -->
+	<bean id="compactDisc" class="com.example.soundsystem.BlankDisc">
 	
+		<!-- However, we use the <property> to set fixed values to the private variables of the bean -->
+		<!-- The 'name' must match the name of the private variable defined in the class. 'value' is the value we're adding-->
+		<property name="title" value="Breakin' Outta Hell"></property>
+		<property name="artist" value="Airbourne"></property>
+
+		<!-- In case the variable is a Collection class, such as list, values to it are assigned this way -->
+		<property name="tracks">
+			<list>
+				<value>Breakin' Outta Hell</value>
+				<value>Never Too Loud</value>
+				<value>Runnin' Wild</value>
+			</list>
+		</property>
+		
 	</bean>
 	
 	
