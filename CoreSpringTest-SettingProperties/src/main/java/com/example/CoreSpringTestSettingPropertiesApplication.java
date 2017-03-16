@@ -14,6 +14,7 @@ public class CoreSpringTestSettingPropertiesApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CoreSpringTestSettingPropertiesApplication.class, args);
 		
+		//Resource input is done via xml
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/jebeniservis.xml");
 		
 		CompactDisc cd = applicationContext.getBean(BlankDisc.class);
