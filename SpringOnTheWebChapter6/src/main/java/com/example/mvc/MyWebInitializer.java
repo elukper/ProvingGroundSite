@@ -4,6 +4,8 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 //This is a continuation of the SpringOnTheWebChapter5
 //All comments from SpringOnTheWebChapter5 have been deleted here
+
+//Go to form.jsp to start
 public class MyWebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 	
 
@@ -23,4 +25,6 @@ public class MyWebInitializer extends AbstractAnnotationConfigDispatcherServletI
 		return new String[] { "/" };
 	}
 
+	
+	
 }

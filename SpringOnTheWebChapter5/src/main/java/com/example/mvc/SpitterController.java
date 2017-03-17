@@ -41,6 +41,7 @@ public class SpitterController {
 	//Aside from providing the proper @RequestMapper for the POST method, we're also using Java Validation API to make sure that the user input is valid
 	//This is done with the @Valid annotation in the input and the Errors interface. If the input for the Spitter is not valid, errors will be logged in the Errors object
 	//Check the Spitter class to see which validations must be met
+	//Note: This shit wasn't working utill we added the hybernate-validator dependency into pom.xml. Of course, this shit wasn't even mentioned in the Spring into Action 4
 	public String processRegistration(@Valid Spitter spitter, Errors errors) {
 		
 		//If any errors have been registered, return the value for the input form to the user

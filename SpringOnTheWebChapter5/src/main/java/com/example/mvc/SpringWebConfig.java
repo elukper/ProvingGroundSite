@@ -27,6 +27,7 @@ public class SpringWebConfig extends WebMvcConfigurerAdapter{
 	public InternalResourceViewResolver viewResolver() {
 		InternalResourceViewResolver viewResolver
                          = new InternalResourceViewResolver();
+		//.setView(JstlView.class) is used in case .jsp is using JSTP tags for formatting or messages e.g. <c:param> or <c:forEach>
 		viewResolver.setViewClass(JstlView.class);
 		viewResolver.setPrefix("/WEB-INF/views/");
 		viewResolver.setSuffix(".jsp");
