@@ -13,7 +13,7 @@ href="<c:url value="/resources/style.css" />" >
 	<!-- Here we have the <form> tag, which is part of the HTML code -->
 	<!-- What's important to notice is the method="POST". This means that when this form is filled and sent, it will be sent as an HTTP POST message -->
 	<!-- Therefore, we need a method to handle this in the SpitterController.java -->
-	<form method="POST">
+	<form method="POST" >
 		First Name: <input type="text" name="firstName" /><br/>
 		Last Name: <input type="text" name="lastName" /><br/>
 		Username: <input type="text" name="username" /><br/>
