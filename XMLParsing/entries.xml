@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parsed-data><entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="java:com.example.Person"><name>Barry</name><parent-name>Joe</parent-name></entries><entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="java:com.example.Person"><name>Joe</name></entries></parsed-data>
