@@ -3,6 +3,7 @@ package hr.altima.utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,25 +29,20 @@ public class ExecuteTest {
 
 		final RelationshipCalculator relCalc = new RelationshipCalculator();
 
-		final Map<DaoAction,Set<DbEntry>> dbEntries = new HashMap<>();
+		final Set<DbEntry> dbEntries = new HashSet<>();
 
 		final List<DbEntry> currentDbEntries = entityService.findAllEntities(DbEntry.class);
 
 		try {
-			dbEntries.putAll(relCalc.createDatabaseInput(EntityServiceUtils.mapDbEntryToName(currentDbEntries), relCalc.resolveDatabaseInput(resolvedData.getEntries())));
+			dbEntries.addAll(relCalc.createDatabaseInput(EntityServiceUtils.mapDbEntryToName(currentDbEntries), relCalc.resolveDatabaseInput(resolvedData.getEntries())));
 
 		} catch (final DuplicateEntryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		if(dbEntries.get(DaoAction.PERSIST) != null) {
-			entityService.saveAllEntities(new ArrayList<>(dbEntries.get(DaoAction.PERSIST)));
-		}
+			entityService.saveAllEntities(new ArrayList<>(dbEntries));
 
-		if(dbEntries.get(DaoAction.UPDATE) != null) {
-			entityService.saveAllEntities(new ArrayList<>(dbEntries.get(DaoAction.UPDATE)));
-		}
 	}
 
 	private Entries parseData() {

@@ -2,7 +2,9 @@ package hr.altima.model.service;
 
 import java.util.List;
 
-public interface EntityService<T> {
+import hr.altima.model.AbstractDbPersistable;
+
+public interface EntityService<T extends AbstractDbPersistable> {
 
 	List<T> findAllEntities(Class<T> entityType);
 

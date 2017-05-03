@@ -8,12 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import hr.altima.model.AbstractDbPersistable;
 import hr.altima.model.dao.DaoLayer;
 
 @Service("entityService")
 @Qualifier("entityService")
 @Transactional
-public class EntityServiceImplementation<T> implements EntityService<T>{
+public class EntityServiceImplementation<T extends AbstractDbPersistable> implements EntityService<T>{
 
 	@Autowired
 	DaoLayer<T> daoLayer;

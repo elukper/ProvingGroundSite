@@ -11,12 +11,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="Entry")
-public class DbEntry implements DbPersistable{
+public class DbEntry extends AbstractDbPersistable{
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="ID", nullable=false, unique=true)
-	private int identity;
+	
 
 	@Column(name="name", nullable=false)
 	private String name;
@@ -24,11 +21,6 @@ public class DbEntry implements DbPersistable{
 	@ManyToOne
 	@JoinColumn(name="parent_Id", nullable=true)
 	private DbEntry parent;
-
-	@Override
-	public int getIdentity() {
-		return identity;
-	}
 
 	public String getName() {
 		return name;

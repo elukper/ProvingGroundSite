@@ -2,15 +2,16 @@ package hr.altima.model.dao;
 
 import java.util.List;
 
-import hr.altima.model.DbPersistable;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface DaoLayer<T> {
+import hr.altima.model.AbstractDbPersistable;
+
+public interface DaoLayer<T extends AbstractDbPersistable> {
 
 	List<T> findAllEntities(Class<T> entityType);
 
+	@Transactional
 	void saveAll(List<T> entities);
-
-	void updateAll( List<DbPersistable> entities,  Class<T> type);
 
 	void saveEntity(T t);
 

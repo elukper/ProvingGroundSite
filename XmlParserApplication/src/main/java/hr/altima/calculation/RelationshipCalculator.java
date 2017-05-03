@@ -54,11 +54,11 @@ public class RelationshipCalculator {
 	}
 
 
-	public Map<DaoAction,Set<DbEntry>> createDatabaseInput(final Map<String, DbEntry> currentEntries, final Map<String,String> entries) {
+	public Set<DbEntry> createDatabaseInput(final Map<String, DbEntry> currentEntries, final Map<String,String> entries) {
 
 		info.clear();
 
-		final Map<DaoAction,Set<DbEntry>> result = new HashMap<>();
+		final Set<DbEntry> result = new HashSet<>();
 		final Set<String> inDatabase = new HashSet<>();
 		inDatabase.addAll(currentEntries.keySet());
 
@@ -73,21 +73,16 @@ public class RelationshipCalculator {
 
 			if(inDatabase.contains(child)){
 				info.add("Overwriting "+child);
-				CollectionsUtil.addToMapOfSets(result, DaoAction.UPDATE, childEntry);
-			} else {
-				CollectionsUtil.addToMapOfSets(result, DaoAction.PERSIST, childEntry);
 			}
+			
+			result.add(childEntry);
 
 			if(!currentEntries.containsKey(child) && childEntry != null){
 				currentEntries.put(child, childEntry);
 			}
 
 			if(parent != null){
-				if(inDatabase.contains(parent)){
-					CollectionsUtil.addToMapOfSets(result, DaoAction.UPDATE, parentEntry);
-				} else {
-					CollectionsUtil.addToMapOfSets(result, DaoAction.PERSIST, parentEntry);
-				}
+				result.add(parentEntry);
 			}
 
 			if(!currentEntries.containsKey(parent) && parentEntry!=null) {

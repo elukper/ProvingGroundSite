@@ -7,7 +7,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class AbstractDao<T> {
+import hr.altima.model.AbstractDbPersistable;
+
+public class AbstractDao<T extends AbstractDbPersistable> {
 
 	@Autowired
 	SessionFactory sessionFactory;

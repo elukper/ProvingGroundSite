@@ -1,14 +1,21 @@
 package hr.altima.model.dao;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 import org.hibernate.Criteria;
 import org.springframework.stereotype.Repository;
 
-import hr.altima.model.DbPersistable;
+import com.google.common.collect.ImmutableMap;
+import hr.altima.model.AbstractDbPersistable;
+import hr.altima.model.DbEntry;
 
 @Repository("daoLayer")
-public class DaoLayerImplementation<T> extends AbstractDao<T> implements DaoLayer<T>{
+public class DaoLayerImplementation<T extends AbstractDbPersistable> extends AbstractDao<T> implements DaoLayer<T>{
+	
+	private static final Map<Class<? extends AbstractDbPersistable>, Predicate<AbstractDbPersistable>> IS_STATEFUL = ImmutableMap.<Class<? extends AbstractDbPersistable>, Predicate<AbstractDbPersistable>>
+	builder().put(DbEntry.class,object -> ((DbEntry) object).getParent()!=null).build();
 
 	@Override
 	@SuppressWarnings("unchecked")
@@ -28,23 +35,25 @@ public class DaoLayerImplementation<T> extends AbstractDao<T> implements DaoLaye
 	public void updateEntity(final T T) {
 		getSession().update(T);
 	}
-
+	
 	@Override
-	public void updateAll(final List<DbPersistable> entities, final Class<T> type) {
-		for(final DbPersistable t : entities) {
-			final T loaded = (T)getSession().load(type, t.getIdentity());
+	public void saveAll(final List<T> entities) {
+		
+		for (AbstractDbPersistable peristable : entities) {
+			
+			if(peristable == null) {
+				continue;
+			}
+			
+			if(IS_STATEFUL.containsKey(peristable.getClass()) && IS_STATEFUL.get(peristable.getClass()).test(peristable)) {
+				getSession().merge(peristable);
+			} else {
+				getSession().update(peristable);
+			}
+			
 		}
-
+		
 	}
-
-
-
-
-
-
-
-
-
 
 
 }
