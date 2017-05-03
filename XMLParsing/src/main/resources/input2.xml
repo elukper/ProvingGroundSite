@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entries>
+	<entry>John</entry>
+	<entry parentName="John">Sam</entry>
+	<entry parentName="John">Dean</entry>
+</entries>
+

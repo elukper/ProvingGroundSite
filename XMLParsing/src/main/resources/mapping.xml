@@ -20,4 +20,18 @@
   <field name="persons" type="com.example.Person" collection="collection" />
 </class>
 
+<class name="com.example.parsedData.Entry">
+	<field name="name" type="string">
+		<bind-xml name="entry" node="text" />
+	</field>
+	
+	<field name="parentName" type="string">
+		<bind-xml name="parentName" node="attribute" />
+	</field>
+</class>
+
+<class name="com.example.parsedData.Entries">
+	<field name="entries" type="com.example.parsedData.Entry" collection="collection"/>
+</class>
+
 </mapping>
