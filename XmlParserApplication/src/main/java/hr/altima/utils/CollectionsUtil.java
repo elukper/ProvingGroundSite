@@ -2,8 +2,10 @@ package hr.altima.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CollectionsUtil {
 
@@ -21,6 +23,17 @@ public class CollectionsUtil {
 		}
 		mapOfLists.get(key).add(value);
 
+	}
+
+	public static <K,V> void addToMapOfSets(final Map<K,Set<V>> map, final K key, final V value) {
+		if(map == null) {
+			return;
+		}
+
+		if(!map.containsKey(key)){
+			map.put(key, new HashSet<>());
+		}
+		map.get(key).add(value);
 	}
 
 	public static <K1,K2,V> void addToMapOfMapsOfLists(final Map<K1,Map<K2,List<V>>> map, final K1 firstKey, final K2 secondKey, final V value) {

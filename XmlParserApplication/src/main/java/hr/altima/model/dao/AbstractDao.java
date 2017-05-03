@@ -32,4 +32,10 @@ public class AbstractDao<T> {
 		getSession().flush();
 		getSession().setFlushMode(FlushMode.AUTO);
 	}
+
+
+
+
+
+
 }

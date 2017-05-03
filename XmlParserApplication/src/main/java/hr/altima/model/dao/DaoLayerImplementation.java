@@ -5,6 +5,8 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.springframework.stereotype.Repository;
 
+import hr.altima.model.DbPersistable;
+
 @Repository("daoLayer")
 public class DaoLayerImplementation<T> extends AbstractDao<T> implements DaoLayer<T>{
 
@@ -26,6 +28,16 @@ public class DaoLayerImplementation<T> extends AbstractDao<T> implements DaoLaye
 	public void updateEntity(final T T) {
 		getSession().update(T);
 	}
+
+	@Override
+	public void updateAll(final List<DbPersistable> entities, final Class<T> type) {
+		for(final DbPersistable t : entities) {
+			final T loaded = (T)getSession().load(type, t.getIdentity());
+		}
+
+	}
+
+
 
 
 

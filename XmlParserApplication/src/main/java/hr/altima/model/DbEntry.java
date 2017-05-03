@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="Entry")
-public class DbEntry {
+public class DbEntry implements DbPersistable{
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -25,6 +25,7 @@ public class DbEntry {
 	@JoinColumn(name="parent_Id", nullable=true)
 	private DbEntry parent;
 
+	@Override
 	public int getIdentity() {
 		return identity;
 	}

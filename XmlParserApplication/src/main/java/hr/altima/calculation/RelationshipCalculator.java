@@ -10,7 +10,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import hr.altima.calculation.exceptions.DuplicateEntryException;
+import hr.altima.enumeration.DaoAction;
 import hr.altima.model.DbEntry;
+import hr.altima.utils.CollectionsUtil;
 import hr.altima.xmlparser.parseddata.Person;
 
 public class RelationshipCalculator {
@@ -52,11 +54,11 @@ public class RelationshipCalculator {
 	}
 
 
-	public Set<DbEntry> createDatabaseInput(final Map<String, DbEntry> currentEntries, final Map<String,String> entries) {
+	public Map<DaoAction,Set<DbEntry>> createDatabaseInput(final Map<String, DbEntry> currentEntries, final Map<String,String> entries) {
 
 		info.clear();
 
-		final Set<DbEntry> result = new HashSet<>();
+		final Map<DaoAction,Set<DbEntry>> result = new HashMap<>();
 		final Set<String> inDatabase = new HashSet<>();
 		inDatabase.addAll(currentEntries.keySet());
 
@@ -71,16 +73,25 @@ public class RelationshipCalculator {
 
 			if(inDatabase.contains(child)){
 				info.add("Overwriting "+child);
-			}
-			if(!currentEntries.containsKey(child) && childEntry != null){
-				currentEntries.put(child, childEntry);
-				result.add(childEntry);
+				CollectionsUtil.addToMapOfSets(result, DaoAction.UPDATE, childEntry);
+			} else {
+				CollectionsUtil.addToMapOfSets(result, DaoAction.PERSIST, childEntry);
 			}
 
+			if(!currentEntries.containsKey(child) && childEntry != null){
+				currentEntries.put(child, childEntry);
+			}
+
+			if(parent != null){
+				if(inDatabase.contains(parent)){
+					CollectionsUtil.addToMapOfSets(result, DaoAction.UPDATE, parentEntry);
+				} else {
+					CollectionsUtil.addToMapOfSets(result, DaoAction.PERSIST, parentEntry);
+				}
+			}
 
 			if(!currentEntries.containsKey(parent) && parentEntry!=null) {
 				currentEntries.put(parent, parentEntry);
-				result.add(parentEntry);
 			}
 
 		}
