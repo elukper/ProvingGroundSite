@@ -38,6 +38,14 @@
     		<version>6.0.6</version>
 		</dependency>
 		
+		<!-- H2 -->
+		<dependency>
+    		<groupId>com.h2database</groupId>
+    		<artifactId>h2</artifactId>
+   		 <version>1.4.194</version>
+		</dependency>
+		
+		
 		<!-- Spring framework -->
 		<dependency>
     		<groupId>org.springframework</groupId>

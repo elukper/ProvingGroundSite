@@ -8,7 +8,7 @@ public interface EntityService<T extends AbstractDbPersistable> {
 
 	List<T> findAllEntities(Class<T> entityType);
 
-	void saveAllEntities(List<T> entities);
+	void saveAllEntities(List<T> entities, final Class<T> entityType);
 
 	void saveEntity(T t);
 

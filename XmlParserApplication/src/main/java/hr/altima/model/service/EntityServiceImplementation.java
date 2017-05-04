@@ -25,8 +25,8 @@ public class EntityServiceImplementation<T extends AbstractDbPersistable> implem
 	}
 
 	@Override
-	public void saveAllEntities(final List<T> entities) {
-		daoLayer.saveAll(entities);
+	public void saveAllEntities(final List<T> entities, final Class<T> entityType) {
+		daoLayer.saveAll(entities,entityType);
 	}
 
 	@Override

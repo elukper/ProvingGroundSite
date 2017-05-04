@@ -5,15 +5,17 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.ImmutableMap;
+
 import hr.altima.model.AbstractDbPersistable;
 import hr.altima.model.DbEntry;
 
 @Repository("daoLayer")
 public class DaoLayerImplementation<T extends AbstractDbPersistable> extends AbstractDao<T> implements DaoLayer<T>{
-	
+
 	private static final Map<Class<? extends AbstractDbPersistable>, Predicate<AbstractDbPersistable>> IS_STATEFUL = ImmutableMap.<Class<? extends AbstractDbPersistable>, Predicate<AbstractDbPersistable>>
 	builder().put(DbEntry.class,object -> ((DbEntry) object).getParent()!=null).build();
 
@@ -28,31 +30,29 @@ public class DaoLayerImplementation<T extends AbstractDbPersistable> extends Abs
 	public void saveEntity(final T t) {
 		persist(t);
 
-
 	}
 
 	@Override
 	public void updateEntity(final T T) {
 		getSession().update(T);
 	}
-	
+
 	@Override
-	public void saveAll(final List<T> entities) {
-		
-		for (AbstractDbPersistable peristable : entities) {
-			
-			if(peristable == null) {
-				continue;
-			}
-			
-			if(IS_STATEFUL.containsKey(peristable.getClass()) && IS_STATEFUL.get(peristable.getClass()).test(peristable)) {
-				getSession().merge(peristable);
+	public void saveAll(final List<T> entities, final Class<T> entityType) {
+		final FlushMode initialFlushMode = getSession().getFlushMode();
+
+		for(final T t : entities) {
+			final T currentEntry = (T)getSession().get(entityType, t.getIdentity());
+			if(currentEntry != null) {
+				currentEntry.setParent(t.getParent());
 			} else {
-				getSession().update(peristable);
+				getSession().persist(t);
 			}
-			
 		}
-		
+
+		getSession().flush();
+		getSession().setFlushMode(initialFlushMode);
+
 	}
 
 

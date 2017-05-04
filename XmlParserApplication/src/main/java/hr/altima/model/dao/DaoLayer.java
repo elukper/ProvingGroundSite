@@ -11,7 +11,7 @@ public interface DaoLayer<T extends AbstractDbPersistable> {
 	List<T> findAllEntities(Class<T> entityType);
 
 	@Transactional
-	void saveAll(List<T> entities);
+	void saveAll(List<T> entities, Class<T> entityType);
 
 	void saveEntity(T t);
 

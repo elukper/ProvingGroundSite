@@ -2,7 +2,6 @@ package hr.altima;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import hr.altima.configuration.AppConfig;
@@ -14,7 +13,10 @@ public class XmlParserApplication {
 	public static void main(final String[] args) throws Exception {
 		SpringApplication.run(XmlParserApplication.class, args);
 
-		final ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
+		final AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
+		applicationContext.getEnvironment().setActiveProfiles("dev");
+		applicationContext.register(AppConfig.class);
+		applicationContext.refresh();
 
 		//		XMLParsingUnit<Entries> xmlParsingUnit;
 		//		final File file = new File("src/main/resources/inputFolder/entries.xml");

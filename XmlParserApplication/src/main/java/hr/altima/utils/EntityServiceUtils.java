@@ -5,9 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import hr.altima.configuration.AppConfig;
 import hr.altima.model.AbstractDbPersistable;
 import hr.altima.model.DbEntry;
 import hr.altima.model.service.EntityService;
@@ -18,9 +16,8 @@ public class EntityServiceUtils {
 		//private constructor
 	}
 
-	public static <T extends AbstractDbPersistable> EntityService<T> createEntityService() {
+	public static <T extends AbstractDbPersistable> EntityService<T> createEntityService(final ApplicationContext applicationContext) {
 
-		final ApplicationContext applicationContext = new AnnotationConfigApplicationContext(AppConfig.class);
 		return (EntityService<T>)applicationContext.getBean("entityService");
 
 	}

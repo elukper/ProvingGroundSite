@@ -2,28 +2,31 @@ package hr.altima.utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
 import hr.altima.calculation.RelationshipCalculator;
 import hr.altima.calculation.exceptions.DuplicateEntryException;
-import hr.altima.enumeration.DaoAction;
 import hr.altima.model.DbEntry;
-import hr.altima.model.service.EntityService;
+import hr.altima.model.service.EntityServiceImplementation;
 import hr.altima.xmlparser.XMLParsingUnit;
 import hr.altima.xmlparser.parseddata.Entries;
 import hr.altima.xmlparser.parseddata.Person;
 
 public class ExecuteTest {
 
+	@Autowired
+	@Qualifier("entityService")
+	private EntityServiceImplementation<DbEntry> entityService; //Shit aint working
+
 	public void executeTest() {
 
-		final EntityService<DbEntry> entityService = EntityServiceUtils.createEntityService();
 
 		final Entries resolvedData = parseData();
 
@@ -41,7 +44,7 @@ public class ExecuteTest {
 			e.printStackTrace();
 		}
 
-			entityService.saveAllEntities(new ArrayList<>(dbEntries));
+		entityService.saveAllEntities(new ArrayList<>(dbEntries),DbEntry.class);
 
 	}
 
