@@ -1,6 +1,6 @@
 package hr.altima.xmlparser;
 
-import java.io.File;
+import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -8,10 +8,9 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
-@PropertySource("classpath:xmlparsing.properties")
+
 public class XMLParsingUnit<T> {
 
 	@Autowired
@@ -27,12 +26,10 @@ public class XMLParsingUnit<T> {
 
 	}
 
-	public T parseXmlToData() throws JAXBException {
-		return (T) unmarshaller.unmarshal(new File(env.getProperty("input.folderandfile")));
-	}
 
-	public T parseXmlToData(final File xml) throws JAXBException {
-		return (T) unmarshaller.unmarshal(xml);
+
+	public T parseXmlTData(final InputStream inputStream) throws JAXBException {
+		return (T)unmarshaller.unmarshal(inputStream);
 	}
 
 }

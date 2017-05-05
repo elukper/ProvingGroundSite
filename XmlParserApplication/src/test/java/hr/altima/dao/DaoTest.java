@@ -1,5 +1,6 @@
 package hr.altima.dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,25 +8,29 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
-import hr.altima.configuration.AppConfig;
-import hr.altima.model.DbEntry;
-import hr.altima.model.service.EntityService;
+import com.google.common.collect.Lists;
 
-@ActiveProfiles("test")
+import hr.altima.dao.service.DbEntryService;
+
+@ActiveProfiles("tst")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig.class})
+@SpringBootTest(webEnvironment=WebEnvironment.RANDOM_PORT)
+@Transactional
 public class DaoTest {
 
 	@Autowired
-	EntityService<DbEntry> entityService;
+	DbEntryService dbEntryService;
+
 
 	@Test
 	public void testAutiwiring() {
-		Assert.assertNotNull(entityService);
+		Assert.assertNotNull(dbEntryService);
 	}
 
 	@Test
@@ -34,9 +39,13 @@ public class DaoTest {
 		final DbEntry input = new DbEntry();
 		input.setName("Some guy");
 
-		entityService.saveEntity(input);
+		dbEntryService.deleteAll();
 
-		final List<DbEntry> output = entityService.findAllEntities(DbEntry.class);
+		//Assert.assertNotNull(input.getIdentity());
+
+		dbEntryService.save(input);
+
+		final List<DbEntry> output = Lists.newArrayList(dbEntryService.findAll());
 
 		Assert.assertEquals(1, output.size());
 
@@ -54,10 +63,15 @@ public class DaoTest {
 
 		child.setParent(parent);
 
-		//child is set first in list, to test persistance
-		entityService.saveAllEntities(Arrays.asList(child,parent), DbEntry.class);
+		dbEntryService.deleteAll();
 
-		final List<DbEntry> output = entityService.findAllEntities(DbEntry.class);
+		//child is set first in list, to test persistance
+		final List<DbEntry> input = new ArrayList<>();
+		input.add(child);
+		input.add(parent);
+		dbEntryService.save(input);
+
+		final List<DbEntry> output = Lists.newArrayList(dbEntryService.findAll());
 
 		Assert.assertEquals(2, output.size());
 
@@ -74,6 +88,8 @@ public class DaoTest {
 	@Test
 	public void testSaveAndOverwrite(){
 
+		dbEntryService.deleteAll();
+
 		//Create initial Database state
 		final DbEntry currentEntry1 = new DbEntry();
 		currentEntry1.setName("Sam Winchester");
@@ -81,7 +97,9 @@ public class DaoTest {
 		final DbEntry currentEntry2 = new DbEntry();
 		currentEntry2.setName("Dean Winchester");
 
-		entityService.saveAllEntities(Arrays.asList(currentEntry1,currentEntry2), DbEntry.class);
+		currentEntry1.setParent(currentEntry2);
+
+		dbEntryService.save(Arrays.asList(currentEntry1,currentEntry2));
 
 		//Create new database state
 		final DbEntry newEntry1 = new DbEntry();
@@ -91,11 +109,12 @@ public class DaoTest {
 
 		currentEntry2.setParent(newEntry1);
 
-		entityService.saveAllEntities(Arrays.asList(currentEntry2,newEntry1,currentEntry1), DbEntry.class);
+
+		dbEntryService.save(Arrays.asList(currentEntry2,currentEntry1,newEntry1));
 
 		//Check new database state
 
-		final List<DbEntry> output = entityService.findAllEntities(DbEntry.class);
+		final List<DbEntry> output = Lists.newArrayList(dbEntryService.findAll());
 
 		Assert.assertEquals(3, output.size());
 

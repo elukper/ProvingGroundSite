@@ -10,7 +10,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import hr.altima.calculation.exceptions.DuplicateEntryException;
-import hr.altima.model.DbEntry;
+import hr.altima.calculation.exceptions.LoopedRelationException;
+import hr.altima.dao.DbEntry;
 import hr.altima.xmlparser.parseddata.Person;
 
 public class RelationshipCalculatorTest {
@@ -51,7 +52,7 @@ public class RelationshipCalculatorTest {
 		input.addAll(startingPersonList);
 		Map<String,String> result = null;
 		try {
-			result = relationshipCalculator.resolveDatabaseInput(input);
+			result = relationshipCalculator.validateInput(input);
 		} catch (final DuplicateEntryException e) {
 			e.printStackTrace();
 		}
@@ -90,7 +91,7 @@ public class RelationshipCalculatorTest {
 		List<String> errors = null;
 
 		try {
-			result = relationshipCalculator.resolveDatabaseInput(input);
+			result = relationshipCalculator.validateInput(input);
 		} catch (final DuplicateEntryException e) {
 			errors = e.getErrors();
 		}
@@ -107,20 +108,47 @@ public class RelationshipCalculatorTest {
 		Map<String,String> entries = null;
 
 		try {
-			entries = relationshipCalculator.resolveDatabaseInput(startingPersonList);
+			entries = relationshipCalculator.validateInput(startingPersonList);
 		} catch (final DuplicateEntryException e) {
 			e.printStackTrace();
 		}
 
 		Assert.assertNotNull(entries);
+		Assert.assertEquals(6, entries.size());
 
-		//		final Set<DbEntry> result = relationshipCalculator.createDatabaseInput(new HashMap<>(), entries);
-		//
-		//		final int expectedNumOfEntries = entries.keySet().size();
-		//
-		//		Assert.assertEquals(expectedNumOfEntries, result.size());
-		//
-		//		Assert.assertEquals(0, relationshipCalculator.getInfo().size());
+	}
+
+	@Test
+	public void testLoopedRelations() {
+
+		final DbEntry currentChild = new DbEntry();
+		currentChild.setName("Marko");
+
+		final DbEntry currentParent = new DbEntry();
+		currentParent.setName("Mirko");
+
+		currentChild.setParent(currentParent);
+
+		final Map<String,DbEntry> currentEntries = new HashMap<>();
+		currentEntries.put(currentChild.getName(), currentChild);
+		currentEntries.put(currentParent.getName(), currentParent);
+
+		Map<String,String> entries = null;
+
+		try {
+			entries = relationshipCalculator.validateInput(startingPersonList);
+		} catch (final DuplicateEntryException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			relationshipCalculator.createDatabaseInput(currentEntries, entries);
+		} catch (final LoopedRelationException e) {
+			// expecting exception with one error
+			Assert.assertEquals(2, e.getErrors().size());
+		}
+
+
 
 	}
 
@@ -142,7 +170,7 @@ public class RelationshipCalculatorTest {
 		Map<String,String> entries = null;
 
 		try {
-			entries = relationshipCalculator.resolveDatabaseInput(startingPersonList);
+			entries = relationshipCalculator.validateInput(startingPersonList);
 		} catch (final DuplicateEntryException e) {
 			e.printStackTrace();
 		}

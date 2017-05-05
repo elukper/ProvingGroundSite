@@ -10,9 +10,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import hr.altima.calculation.exceptions.DuplicateEntryException;
-import hr.altima.enumeration.DaoAction;
-import hr.altima.model.DbEntry;
-import hr.altima.utils.CollectionsUtil;
+import hr.altima.calculation.exceptions.LoopedRelationException;
+import hr.altima.dao.DbEntry;
+import hr.altima.utils.EntityServiceUtils;
 import hr.altima.xmlparser.parseddata.Person;
 
 public class RelationshipCalculator {
@@ -24,7 +24,7 @@ public class RelationshipCalculator {
 	}
 
 
-	public Map<String,String> resolveDatabaseInput(final List<Person> parsedData) throws DuplicateEntryException{
+	public Map<String,String> validateInput(final List<Person> parsedData) throws DuplicateEntryException{
 
 		final List<String> errors = new ArrayList<>();
 
@@ -39,7 +39,7 @@ public class RelationshipCalculator {
 				continue;
 			}
 			result.put(person.getEntry(), person.getParentName());
-			if(person.getParentName()!=null) {
+			if(person.getParentName()!=null && !result.containsKey(person.getParentName())) {
 				result.put(person.getParentName(), null);
 			}
 
@@ -54,9 +54,10 @@ public class RelationshipCalculator {
 	}
 
 
-	public Set<DbEntry> createDatabaseInput(final Map<String, DbEntry> currentEntries, final Map<String,String> entries) {
+	public Set<DbEntry> createDatabaseInput(final Map<String, DbEntry> currentEntries, final Map<String,String> entries) throws LoopedRelationException {
 
-		info.clear();
+
+		checkLoopedRelationships(currentEntries, entries);
 
 		final Set<DbEntry> result = new HashSet<>();
 		final Set<String> inDatabase = new HashSet<>();
@@ -69,12 +70,14 @@ public class RelationshipCalculator {
 			final DbEntry childEntry = getNewOrExisting(currentEntries, child);
 			final DbEntry parentEntry = getNewOrExisting(currentEntries, parent);
 
-			childEntry.setParent(parentEntry);
+			if(parentEntry!=null) {
+				childEntry.setParent(parentEntry);
+			}
 
 			if(inDatabase.contains(child)){
 				info.add("Overwriting "+child);
 			}
-			
+
 			result.add(childEntry);
 
 			if(!currentEntries.containsKey(child) && childEntry != null){
@@ -93,6 +96,29 @@ public class RelationshipCalculator {
 
 		return result;
 	}
+
+	private void checkLoopedRelationships(final Map<String, DbEntry> currentEntries, final Map<String,String> newDbEntries) throws LoopedRelationException {
+		final Map<String, List<String>> parentsToChildren = EntityServiceUtils.resolveParentChildRelations(currentEntries, newDbEntries);
+
+		final List<String> errors = new ArrayList<>();
+		final Set<String> loopedParentsFound = new HashSet<>();
+
+		for(final Entry<String, List<String>> parentToChildren : parentsToChildren.entrySet()) {
+
+			for(final String child : parentToChildren.getValue()) {
+
+				if(parentsToChildren.containsKey(child) && parentsToChildren.get(child).contains(parentToChildren.getKey())) {
+					errors.add(child + " is parent to "+parentToChildren.getKey());
+					loopedParentsFound.add(parentToChildren.getKey());
+				}
+			}
+		}
+
+		if(!errors.isEmpty()) {
+			throw new LoopedRelationException(errors);
+		}
+	}
+
 
 	private DbEntry getNewOrExisting(final Map<String,DbEntry> currentEntries, final String name) {
 
