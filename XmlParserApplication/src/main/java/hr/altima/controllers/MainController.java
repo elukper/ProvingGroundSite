@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -46,6 +47,8 @@ public class MainController {
 	@Autowired
 	Environment env;
 
+	Logger logger = Logger.getLogger(MainController.class);
+
 	@RequestMapping(value="/resolvefromdisk", method = RequestMethod.GET)
 	public ResponseEntity<List<String>> parseXmlFromDisk() {
 
@@ -53,6 +56,7 @@ public class MainController {
 		try {
 			xmlParsingUnit = new XMLParsingUnit<>(Entries.class);
 		} catch (final JAXBException e1) {
+			logger.error(e1.getMessage());
 			return new ResponseEntity<List<String>>(Arrays.asList("Unable to resolve xml parser, contact support"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -62,6 +66,7 @@ public class MainController {
 		try {
 			errors = parseSingleFile(Files.asByteSource(file).openStream(), xmlParsingUnit);
 		} catch (final IOException e) {
+			logger.error(e.getMessage());
 			return new ResponseEntity<List<String>>(Arrays.asList("Error resolving file"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -82,6 +87,7 @@ public class MainController {
 		try {
 			xmlParsingUnit = new XMLParsingUnit<>(Entries.class);
 		} catch (final JAXBException e1) {
+			logger.error(e1.getMessage());
 			return new ResponseEntity<List<String>>(Arrays.asList("Unable to resolve xml parser, contact support"), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
@@ -93,6 +99,7 @@ public class MainController {
 				errors.addAll(parseSingleFile(multiPart[i].getInputStream(), xmlParsingUnit));
 			} catch (final IOException e) {
 				errors.add("Error resolving file");
+				logger.error(e.getMessage());
 			}
 		}
 
@@ -112,27 +119,34 @@ public class MainController {
 		final List<String> errors = new ArrayList<>();
 
 		try {
+			logger.info("Parsing XML file");
 			final Entries entries = xmlParsingUnit.parseXmlTData(inputStream);
 
 			entries.getEntries();
 
 			final RelationshipCalculator relationshipCalculator = new RelationshipCalculator();
 
+			logger.info("Validating parsed data");
 			final Map<String,String> validatedParsedData = relationshipCalculator.validateInput(entries.getEntries());
 
 			final Map<String,DbEntry> currentEntries = EntityServiceUtils.mapDbEntryToName(dbEntryService.findAll());
 
+			logger.info("Calculating relationships");
 			final Set<DbEntry> dataToStore = relationshipCalculator.createDatabaseInput(currentEntries, validatedParsedData);
 
+			logger.info("Saving results");
 			dbEntryService.save(new ArrayList<>(dataToStore));
 
 
 		} catch (final JAXBException e) {
 			errors.add("Error parsing XML file: "+e.getMessage());
+			logger.error(e.getMessage());
 		}  catch (final DuplicateEntryException e) {
 			errors.addAll(e.getErrors());
+			logger.error(e.getMessage());
 		} catch (final LoopedRelationException e) {
 			errors.addAll(e.getErrors());
+			logger.error(e.getMessage());
 		}
 
 		return errors;

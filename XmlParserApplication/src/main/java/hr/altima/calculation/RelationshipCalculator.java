@@ -1,13 +1,14 @@
 package hr.altima.calculation;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 import hr.altima.calculation.exceptions.DuplicateEntryException;
 import hr.altima.calculation.exceptions.LoopedRelationException;
@@ -17,14 +18,13 @@ import hr.altima.xmlparser.parseddata.Person;
 
 public class RelationshipCalculator {
 
-	private final List<String> info = new ArrayList<>();
 
-	public List<String> getInfo() {
-		return Collections.unmodifiableList(info);
-	}
+	Logger logger = Logger.getLogger(RelationshipCalculator.class);
+
 
 
 	public Map<String,String> validateInput(final List<Person> parsedData) throws DuplicateEntryException{
+
 
 		final List<String> errors = new ArrayList<>();
 
@@ -35,6 +35,7 @@ public class RelationshipCalculator {
 				if(!result.get(person.getEntry()).equals(person.getParentName())){
 					//Identical entry at two places is skipped, not an error
 					errors.add("Duplicate entry detected: "+person.getEntry());
+					logger.error("Duplicate entry detected: "+person.getEntry());
 				}
 				continue;
 			}
@@ -75,7 +76,7 @@ public class RelationshipCalculator {
 			}
 
 			if(inDatabase.contains(child)){
-				info.add("Overwriting "+child);
+				logger.info("Overwriting existing entry: "+child);
 			}
 
 			result.add(childEntry);
@@ -100,6 +101,8 @@ public class RelationshipCalculator {
 	private void checkLoopedRelationships(final Map<String, DbEntry> currentEntries, final Map<String,String> newDbEntries) throws LoopedRelationException {
 		final Map<String, List<String>> parentsToChildren = EntityServiceUtils.resolveParentChildRelations(currentEntries, newDbEntries);
 
+		logger.info("Checking for looped relations");
+
 		final List<String> errors = new ArrayList<>();
 		final Set<String> loopedParentsFound = new HashSet<>();
 
@@ -109,6 +112,7 @@ public class RelationshipCalculator {
 
 				if(parentsToChildren.containsKey(child) && parentsToChildren.get(child).contains(parentToChildren.getKey())) {
 					errors.add(child + " is parent to "+parentToChildren.getKey());
+					logger.error(child + " is parent to "+parentToChildren.getKey());
 					loopedParentsFound.add(parentToChildren.getKey());
 				}
 			}
