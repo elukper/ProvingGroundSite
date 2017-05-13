@@ -18,6 +18,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @Configuration
 @EnableWebMvc
@@ -25,7 +26,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @PropertySource("classpath:databaseConnection.properties")
 @ComponentScan("com.feeddit")
 @EnableJpaRepositories(basePackages = "com.feeddit.repository")
-public class WebAppConfig {
+public class WebAppConfig extends WebMvcConfigurerAdapter{
 
 	@Autowired
 	Environment env;

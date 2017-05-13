@@ -1,28 +1,34 @@
 package com.feeddit.model;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Version;
+import javax.persistence.Table;
 
-@MappedSuperclass
-public abstract class AbstractEntry {
+@Entity
+@Table(name="users")
+public class User {
 
-	@Version
-	@Access(AccessType.FIELD)
-	private long version;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="ID", nullable=false, unique=true)
 	private Long identity;
 
+	@Column(name="username")
+	private String username;
+
+	@Column(name="password")
+	private String password;
+
+	@Column(name="admin")
+	private boolean admin;
+
 	public Long getIdentity() {
 		return identity;
 	}
+
 
 }

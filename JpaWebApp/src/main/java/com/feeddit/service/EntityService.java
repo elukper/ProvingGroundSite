@@ -2,16 +2,16 @@ package com.feeddit.service;
 
 import java.util.List;
 
-import com.feeddit.model.AbstractEntry;
+import com.feeddit.model.DbEntry;
 
 
-public interface EntityService<T extends AbstractEntry> {
+public interface EntityService {
 
-	public void create(T t);
+	public void create(DbEntry t);
 	public void delete(Long id);
-	public List<T> findAll();
-	public T findById(Long id);
-	public void save(T t);
-	public void saveAll(List<T> t);
+	public List<DbEntry> findAll();
+	public DbEntry findById(Long id);
+	public void save(DbEntry t);
+	public void saveAll(List<DbEntry> t);
 
 }

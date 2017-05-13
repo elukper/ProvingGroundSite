@@ -1,5 +1,8 @@
 package com.feeddit.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.http.HttpStatus;
@@ -16,7 +19,7 @@ import com.feeddit.service.EntityService;
 public class MainController {
 
 	@Resource
-	private EntityService<DbEntry> entityService;
+	private EntityService entityService;
 
 	@RequestMapping("/welcome")
 	public ModelAndView helloWorld() {
@@ -31,16 +34,25 @@ public class MainController {
 	@RequestMapping(value="/test", method = RequestMethod.GET)
 	public ResponseEntity<String> testDb() {
 
-		//		final Iterable<DbEntry> entries = entityService.findAll();
-		//
-		//		final DbEntry parent = new DbEntry();
-		//		parent.setName("John");
-		//
-		//		entityService.save(parent);
-		//
-		//		for(final DbEntry entry : entries) {
-		//			entry.setParent(parent);
-		//		}
+		final Iterable<DbEntry> entries = entityService.findAll();
+
+		final DbEntry parent = new DbEntry();
+		parent.setName("John");
+
+		final DbEntry child = new DbEntry();
+		child.setName("Jack");
+		child.setParent(parent);
+
+		final List<DbEntry> list = new ArrayList<>();
+		list.add(child);
+		list.add(parent);
+
+		entityService.saveAll(list);
+
+
+		for(final DbEntry entry : entries) {
+			entry.setParent(parent);
+		}
 
 		System.out.println("TADA!");
 

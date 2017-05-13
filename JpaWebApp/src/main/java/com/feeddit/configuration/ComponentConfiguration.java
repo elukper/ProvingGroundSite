@@ -1,9 +1,12 @@
 package com.feeddit.configuration;
 
-//@Configuration
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 //@EnableTransactionManagement
 //@PropertySource("classpath:databaseConnection.properties")
-//@ComponentScan("com.feeddit.configuration")
+@ComponentScan("com.feeddit")
 public class ComponentConfiguration {
 
 	//	@Bean

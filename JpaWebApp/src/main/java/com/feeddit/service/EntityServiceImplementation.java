@@ -6,18 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.feeddit.model.AbstractEntry;
+import com.feeddit.model.DbEntry;
 import com.feeddit.repository.EntityRepository;
 
 @Service("entityService")
-public class EntityServiceImplementation<T extends AbstractEntry> implements EntityService<T> {
+public class EntityServiceImplementation implements EntityService{
 
 	@Autowired
-	EntityRepository<T> entityRepository;
+	EntityRepository entityRepository;
 
 	@Override
 	@Transactional
-	public void create(final T t) {
+	public void create(final DbEntry t) {
 		entityRepository.save(t);
 	}
 
@@ -29,26 +29,26 @@ public class EntityServiceImplementation<T extends AbstractEntry> implements Ent
 
 	@Override
 	@Transactional
-	public List<T> findAll() {
+	public List<DbEntry> findAll() {
 		return entityRepository.findAll();
 	}
 
 	@Override
 	@Transactional
-	public T findById(final Long id) {
+	public DbEntry findById(final Long id) {
 		return entityRepository.findOne(id);
 	}
 
 	@Override
 	@Transactional
-	public void save(final T t) {
+	public void save(final DbEntry t) {
 		entityRepository.save(t);
 
 	}
 
 	@Override
 	@Transactional
-	public void saveAll(final List<T> t) {
+	public void saveAll(final List<DbEntry> t) {
 		entityRepository.save(t);
 	}
 
